@@ -21,7 +21,6 @@
   "dependencies": {
     "babel": "^5.0.12",
     "event-stream": "~3.3.0",
-    "flow-bin": "git://github.com/stoneMcClane/flow-bin#master",
     "flow-to-jshint": "~0.2.0",
     "gulp-util": "~3.0.1",
     "jshint": "^2.5.10",
@@ -29,7 +28,8 @@
     "log-symbols": "^1.0.1",
     "path": "^0.12.7",
     "q": "^1.1.2",
-    "through2": "~0.6.3"
+    "through2": "~0.6.3",
+    "flow-bin": "git://github.com/stoneMcClane/flow-bin#master"
   },
   "devDependencies": {
     "coveralls": "~2.11.2",
