@@ -11,6 +11,7 @@ var logSymbols = require('log-symbols');
 var { execFile, spawn } = require('child_process');
 var flowToJshint = require('flow-to-jshint');
 var stylishReporter = require(require('jshint-stylish')).reporter;
+var path = require('path');
 
 /**
  * Flow check initialises a server per folder when run,
@@ -56,10 +57,17 @@ function getFlowBin() {
     return process.env.FLOW_BIN || flowBin;
 }
 
+// normalizes paths (especially important on windows)
+function normalizePath(p) {
+  return path.resolve(p);
+}
+
 function executeFlow(_path, options) {
   var deferred = Q.defer();
 
   var opts = optsToArgs(options);
+
+  _path = normalizePath(_path);
 
   var command = opts.length ? (() => {
     servers.push(path.dirname(_path));
@@ -86,7 +94,7 @@ function executeFlow(_path, options) {
     var result = {};
     result.errors = parsed.errors.filter(function (error) {
       error.message = error.message.filter(function (message, index) {
-        var isCurrentFile = message.path === _path;
+        var isCurrentFile = normalizePath(message.path) === _path;
         var result = false;
         /**
          * If FlowType traces an issue to a method inside a file that is not
@@ -100,12 +108,12 @@ function executeFlow(_path, options) {
 
         var previous = error.message[index - 1];
         if (previous && lineEnding.test(previous.descr)) {
-          result = previous.path === _path;
+          result = normalizePath(previous.path) === _path;
         }
 
         var nextMessage = error.message[index + 1];
         if (nextMessage && lineEnding.test(message.descr)) {
-          result = nextMessage.path === _path;
+          result = normalizePath(nextMessage.path) === _path;
         }
 
         var generalError = (/(Fatal)/.test(message.descr));
